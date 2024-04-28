@@ -3,7 +3,7 @@
 # Author           : Michał Sadkowski ( s197776@student.pg.edu.pl )
 # Created On       : 18.04.2024 
 # Last Modified By : Michał Sadkowski ( s197776@student.pg.edu.pl )
-# Last Modified On : 18.04.2024 
+# Last Modified On : 21.04.2024 
 # Version          : 1.0
 #
 # Description      :
@@ -12,6 +12,40 @@
 # Licensed under GPL (see /usr/share/common-licenses/GPL for more details
 # or contact # the Free Software Foundation for a copy)
 
+# Funkcja wyświetlająca informacje o autorze.
+show_author_info() {
+    zenity --info --text="Autor: Michał Sadkowski\nEmail: s197776@student.pg.edu.pl"
+}
+
+show_help() {
+    zenity --info --text="Instrukcje obsługi konwertera zdjęć:\n\n\
+    - Wybierz rodzaj konwersji z listy opcji poprzez podwojne klikniecie lub pojedyncze i przycisk OK.\n\
+    - Wybierz plik do konwersji i potwierdz.\n\
+    - Po zakończeniu konwersji pojawi się powiadomienie o wyniku konwersji.\n\
+    - Możesz kontynuować kolejne konwersje lub wyjść z programu.\n\
+    - Uruchomienie z opcja -v powoduje wyswietlenie informacji o autorze."
+}
+
+while getopts ":vh" opt; do
+    case ${opt} in
+        v )
+            show_author_info
+            exit 0
+            ;;
+        h )
+            show_help
+            exit 0
+            ;;
+        \? )
+            zenity --error --text="Nieznana opcja: -$OPTARG"
+            exit 1
+            ;;
+        : )
+            exit 1
+            ;;
+    esac
+done
+shift $((OPTIND -1))
 
 # Funkcja sprawdzająca, czy użytkownik ma pobrany pakiet ImageMagick i ewentualnie wymuszający jego pobranie.
 # Niezbędne do prawidłowego działania skryptu.
@@ -171,7 +205,10 @@ main() {
     esac
 }
 
-powitanie # Rozpoczęcie skryptu od funkcji powitania.
-main # Przejście do głównej funkcji programu
+if [ "$#" -eq 0 ]; then
+    powitanie
+    main
+    exit 0
+fi
 
 exit 0
